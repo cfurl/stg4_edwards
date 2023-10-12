@@ -1,19 +1,3 @@
-# starting that S3 journey
-# https://www.gormanalysis.com/blog/connecting-to-aws-s3-with-r/
-# stg4-eaa-clip
-#access key
-# AKIATXXHNYYX6U622XVK
-# secret access key
-#x2dRtJoSEb93+dN0UN+gaJqwmYvrlt/4SXbKm2R7
-
-
-library("aws.s3")
-
-Sys.setenv(
-  "AWS_ACCESS_KEY_ID" = "AKIATXXHNYYX6U622XVK",
-  "AWS_SECRET_ACCESS_KEY" = "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",
-  "AWS_DEFAULT_REGION" = "us-east-2"
-)
 
 #bucketlist()
 

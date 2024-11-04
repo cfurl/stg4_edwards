@@ -6,11 +6,12 @@ library(janitor)
 library(magick)
 library(ggplot2)
 library(units)
+library(ggplot2)
 
 
 # identify the root folder of your parquet files
 #month_parq <- "C:\\texas_mpe\\arrow\\st4_parq"
-month_parq <- "C:\\texas_mpe\\arrow\\st4_parq_eaa"
+month_parq <- ".\\parquet\\parquet_files"
 
 # establish your connection, this is the time to see your file system schema and make any adjustments
 tx_rain <- open_dataset(month_parq)
@@ -33,8 +34,8 @@ toc()
 
 # read in the shape file of the ST4 bins clipped to State of Texas
 # Join the just completed query with ST4 bins using 'grib_id'
-#mapp <- read_sf("C:\\texas_mpe\\arrow\\gis\\eaa_clipped_2_boundary_cleaned.shp") |>
-map <- read_sf("C:\\texas_mpe\\arrow\\gis\\eaa_recharge_basins\\clipped_hrap\\usgs_dissolved.shp") |>
+bin_outline <- read_sf(".\\gis\\clipped_hrap\\usgs_recharge_basins\\usgs_dissolved.shp") 
+map <- read_sf(".\\gis\\clipped_hrap\\usgs_recharge_basins\\usgs_dissolved.shp") |>
   #map <- read_sf("C:\\texas_mpe\\arrow\\gis\\texas_grib_bins_clipped.shp") |>
   clean_names() |>
   left_join(sum_rain_collect,
@@ -46,7 +47,7 @@ map_math <- map |> st_drop_geometry() |>
 sum(map_math$cubic_m_precip) * 39.37/sum(map_math$bin_area) # 39.37 is meter to inch
 
 # read in png of your logo
-logo <- image_read(path='C:\\texas_mpe\\arrow\\logo\\flag.png')
+logo <- image_read(path='.\\gis\\logo\\EAHCP_color_vertical logo.png')
 #logo <- image_read(path='C:\\texas_mpe\\arrow\\logo\\mazari-newfel.jpg')
 # create a plot box to help you position your logo
 plot_box <- tibble(xmin = st_bbox(map)[1],
@@ -70,7 +71,7 @@ p1 <- ggplot() +
                     show.limits = FALSE,
                     na.value = "#F1F4FC")+
   ggtitle("2015 Precipitation") +
-  geom_sf(data = mapp, fill=NA) +
+  geom_sf(data = bin_outline, fill=NA) +
   annotation_raster(logo, 
                     # Position adjustments here using plot_box$max/min/range
                     ymin = plot_box$ymin + 1,
@@ -90,7 +91,7 @@ p1 <- ggplot() +
         panel.background = element_rect(fill = "#F1F4FC"))
 
 
-ggsave(filename = "eaa_test_recharg3.png", device = "png", path = "C:\\texas_mpe\\arrow\\plots", plot = p1, width = 6.5, height = 4.5, units = "in")
+ggsave(filename = "eaa_test_recharg3.png", device = "png", path = ".\\plots", plot = p1, width = 6.5, height = 4.5, units = "in")
 
 
 

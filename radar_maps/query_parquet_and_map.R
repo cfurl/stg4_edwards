@@ -58,18 +58,30 @@ plot_box <- tibble(xmin = st_bbox(map)[1],
                    yrange = ymax - ymin) 
 
 
+
+
+
+
+
+
 p1 <- ggplot() +
   
   geom_sf(data = map, aes(fill = sum_rain), color = NA)+
+  
   scale_fill_stepsn(name = "mm",
-                    colours=c("#0826A2","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" ),
+                    #colours=c("#0826A2","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" ),
+                    colours=c(colours),
                     # this is n = colors - 1
-                    breaks = c(150, 200, 250, 375, 500, 625, 750, 1000, 1250, 1500, 2000, 2500),
-                    limits=c(0,3000),
+                    #breaks = c(150, 200, 250, 375, 500, 625, 750, 1000, 1250, 1500, 2000, 2500),
+                    breaks = c(breaks),
+                    #limits=c(0,3000),
+                    limits = c (min,max),
                     # this is n = colors; and midpoint of break
-                    values = scales::rescale(c(75, 175, 225, 312.5, 437.5, 562.5, 687.5, 875, 1125, 1375, 1750, 2250, 2750)), 
+                    #values = scales::rescale(c(75, 175, 225, 312.5, 437.5, 562.5, 687.5, 875, 1125, 1375, 1750, 2250, 2750)),
+                    values = scales::rescale(c(values)), 
                     show.limits = FALSE,
                     na.value = "#F1F4FC")+
+  
   ggtitle("2015 Precipitation") +
   geom_sf(data = bin_outline, fill=NA) +
   annotation_raster(logo, 
@@ -83,7 +95,7 @@ p1 <- ggplot() +
         axis.text.y = element_blank(),
         plot.title = element_text(face = "bold"),
         axis.ticks = element_blank(),
-        plot.background = element_rect(color = "red", fill = "#F1F4FC"),
+        plot.background = element_rect(color = "#F1F4FC", fill = "#F1F4FC"),
         panel.grid.major = element_blank(),
         legend.background= element_rect(fill = "#F1F4FC"),
         legend.text = element_text(size = 5),

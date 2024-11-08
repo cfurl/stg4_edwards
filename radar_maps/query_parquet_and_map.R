@@ -34,6 +34,8 @@ toc()
 
 # read in the shape file of the ST4 bins clipped to State of Texas
 # Join the just completed query with ST4 bins using 'grib_id'
+
+streams <- read_sf(".\\gis\\boundaries_features\\streams_recharge.shp")
 bin_outline <- read_sf(".\\gis\\clipped_hrap\\usgs_recharge_basins\\usgs_dissolved.shp") 
 map <- read_sf(".\\gis\\clipped_hrap\\usgs_recharge_basins\\usgs_dissolved.shp") |>
   #map <- read_sf("C:\\texas_mpe\\arrow\\gis\\texas_grib_bins_clipped.shp") |>
@@ -66,24 +68,19 @@ plot_box <- tibble(xmin = st_bbox(map)[1],
 
 p1 <- ggplot() +
   
-  geom_sf(data = map, aes(fill = sum_rain), color = NA)+
+  geom_sf(data = map, aes(fill = sum_rain), linewidth = .05)+
   
   scale_fill_stepsn(name = "mm",
-                    #colours=c("#0826A2","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" ),
-                    colours=c(colours),
-                    # this is n = colors - 1
-                    #breaks = c(150, 200, 250, 375, 500, 625, 750, 1000, 1250, 1500, 2000, 2500),
-                    breaks = c(breaks),
-                    #limits=c(0,3000),
-                    limits = c (min,max),
-                    # this is n = colors; and midpoint of break
-                    #values = scales::rescale(c(75, 175, 225, 312.5, 437.5, 562.5, 687.5, 875, 1125, 1375, 1750, 2250, 2750)),
-                    values = scales::rescale(c(values)), 
+                    colours=c("pink",NA,"#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","orange" ), 
+                    breaks = c(2,10,20,30,40,50,60,70,80,90,100,110,120),
+                    limits=c(0,130),
+                    values = scales::rescale(c(1,5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125), 
+                                             from = c(0, 130)), 
                     show.limits = FALSE,
-                    na.value = "#F1F4FC")+
+                    na.value = "#F1F4FC")  +
   
   ggtitle("2015 Precipitation") +
-  geom_sf(data = bin_outline, fill=NA) +
+  geom_sf(data = streams, fill=NA, color="blue") +
   annotation_raster(logo, 
                     # Position adjustments here using plot_box$max/min/range
                     ymin = plot_box$ymin + 1,

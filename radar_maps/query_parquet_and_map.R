@@ -33,25 +33,24 @@ sum_rain_collect <- collect(sum_rain_query)
 toc()
 
 
-# read in the shape file of the ST4 bins clipped to State of Texas
+# read in the shape file of the ST4 bins clipped to the EAA recharge area
 # Join the just completed query with ST4 bins using 'grib_id'
 
-streams <- read_sf(".\\gis\\boundaries_features\\streams_recharge.shp")
-ws_outline <- read_sf(".\\gis\\boundaries_features\\usgs_basins.shp") 
 map <- read_sf(".\\gis\\clipped_hrap\\usgs_recharge_basins\\usgs_dissolved.shp") |>
-  #map <- read_sf("C:\\texas_mpe\\arrow\\gis\\texas_grib_bins_clipped.shp") |>
   clean_names() |>
-  left_join(sum_rain_collect,
-            by = "grib_id" )
+  left_join(sum_rain_collect, by = "grib_id" )
 
 map_math <- map |> st_drop_geometry() |>
   mutate(cubic_m_precip = bin_area * sum_rain * .001)
 
-sum(map_math$cubic_m_precip) * 39.37/sum(map_math$bin_area) # 39.37 is meter to inch
+bap <- sum(map_math$cubic_m_precip) * 39.37/sum(map_math$bin_area) # 39.37 is meter to inch
 
-# read in png of your logo
+# read in other items to map - dress up figure
+streams <- read_sf(".\\gis\\boundaries_features\\streams_recharge.shp")
+ws_outline <- read_sf(".\\gis\\boundaries_features\\usgs_basins.shp") 
+
+
 logo <- image_read(path='.\\gis\\logo\\EAHCP_color_vertical logo.png')
-#logo <- image_read(path='C:\\texas_mpe\\arrow\\logo\\mazari-newfel.jpg')
 # create a plot box to help you position your logo
 plot_box <- tibble(xmin = st_bbox(map)[1],
                    xmax = st_bbox(map)[3],
@@ -60,10 +59,10 @@ plot_box <- tibble(xmin = st_bbox(map)[1],
                    xrange = xmax - xmin,
                    yrange = ymax - ymin) 
 
-{
+
 linear_radar_scale_low_break <- function (min, max, bin_number, first_break) {
   
-  colours <- as_tibble(c(NA,"#0826A2","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" )) |>
+  colours <- as_tibble(c(NA,"#59b3f7","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" )) |>
     slice(1:(bin_number))
   
   breaks <- as_tibble(seq(min,max,max/bin_number)) |>
@@ -81,6 +80,7 @@ linear_radar_scale_low_break <- function (min, max, bin_number, first_break) {
   
 }
 
+# run your scale function and parse output for scale_fill_stepsn
 a <- linear_radar_scale_low_break (0,200,10,5)
 
 colours <- unlist(a[1])
@@ -89,7 +89,7 @@ max <- unlist(a[3])
 breaks <- unlist(a[4])
 values <-  unlist(a[5])
 
-}
+
 
 
 p1 <- ggplot() +
@@ -99,34 +99,29 @@ p1 <- ggplot() +
                     colours=c(colours), 
                     breaks = c(breaks),
                     limits=c(min,max),
-                    values = scales::rescale(c(values), 
-                                             from = c(min, max)), 
+                    values = scales::rescale(c(values), from = c(min, max)), 
                     show.limits = FALSE,
                     na.value = "#F1F4FC")  +
   
-  
-  
-  #scale_fill_stepsn(name = "mm",
-   #                 colours=c("pink",NA,"#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","orange" ), 
-    #                breaks = c(2,10,20,30,40,50,60,70,80,90,100,110,120),
-     #               limits=c(0,130),
-      #              values = scales::rescale(c(1,5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125), 
-       #                                      from = c(0, 130)), 
-        #            show.limits = FALSE,
-         #           na.value = "#F1F4FC")  +
-  
-  ggtitle("2015 Precipitation") +
-  geom_sf(data = streams, fill=NA, color="blue") +
-  geom_sf(data = ws_outline, fill=NA, color="black", linewidth = .05) +
-  annotation_raster(logo, 
+  #ggtitle("2015 Precipitation") +
+  geom_sf(data = streams, fill=NA, color="blue", linewidth = .1) +
+ 
+  annotation_raster(logo, # native logo is 796 x 1168
                     # Position adjustments here using plot_box$max/min/range
-                    ymin = plot_box$ymin + 1,
-                    ymax = plot_box$ymin + 1 + plot_box$yrange*.1, 
-                    xmin = plot_box$xmin + 2,
-                    xmax = plot_box$xmin + 2 + plot_box$xrange * .1) +
-  theme(legend.key.height = unit(1.4, "cm"),
+                    ymin = plot_box$ymin ,
+                    ymax = plot_box$ymin + .27 , 
+                    xmin = plot_box$xmin ,
+                    xmax = plot_box$xmin + .18) +
+  annotate(geom="text",x= -99,y=29.28,label="September 2015 Precipitation",size=3,hjust=0)+
+  annotate(geom="text",x= -99,y=29.2,label= paste0("Basin average of ", sprintf("%0.2f", bap)),size=3,hjust=0)+
+  
+  theme(legend.key.height = unit(1.0, "cm"),
+        legend.margin = margin(0,0,0,0),
+        legend.box.margin=margin(-10,2,-10,-10),
         plot.margin=unit(c(0,0,0,0), 'cm'),
+        axis.title = element_blank(),
         axis.text.y = element_blank(),
+        axis.text.x = element_blank(),
         plot.title = element_text(face = "bold"),
         axis.ticks = element_blank(),
         plot.background = element_rect(color = "#F1F4FC", fill = "#F1F4FC"),

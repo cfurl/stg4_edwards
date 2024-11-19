@@ -59,19 +59,26 @@ plot_box <- tibble(xmin = st_bbox(map)[1],
                    xrange = xmax - xmin,
                    yrange = ymax - ymin) 
 
-
-linear_radar_scale_low_break <- function (min, max, bin_number, first_break) {
+linear_radar_scale_two_break <- function (min, max, bin_number_minus_2, first_break, second_break) {
   
-  colours <- as_tibble(c(NA,"#59b3f7","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" )) |>
-    slice(1:(bin_number))
+  # min <- 0
+  #  max <- 200
+  # bin_number <- 10
+  #  first_break <- 2 # less than 2 I want NA for color
+  # second_break <- 6 # from 2-6 I want trace rain color
+  
+  colours <- as_tibble(c(NA,"#0826A2","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" )) |>
+    slice(1:(bin_number_minus_2+2))
   
   breaks <- as_tibble(seq(min,max,max/bin_number)) |>
     slice(2:n()) |>
     slice(1:(n()-1))|>
+    add_row(value = second_break, .before = 1)|>
     add_row(value = first_break, .before = 1)
   
   breaks_w_lims <- as_tibble(seq(min,max,max/bin_number))  |>
-    add_row(value = first_break, .before = 2) 
+    add_row(value = second_break, .before = 2)|>
+    add_row(value = first_break, .before = 2)  
   
   values <- rollmean(breaks_w_lims,2)
   breaks <- as.numeric(unlist(breaks))  
@@ -80,14 +87,14 @@ linear_radar_scale_low_break <- function (min, max, bin_number, first_break) {
   
 }
 
-# run your scale function and parse output for scale_fill_stepsn
-a <- linear_radar_scale_low_break (0,200,10,5)
+a <- linear_radar_scale_two_break (0,200,8,2,6)
 
 colours <- unlist(a[1])
 min <- unlist(a[2])
 max <- unlist(a[3])
 breaks <- unlist(a[4])
 values <-  unlist(a[5])
+
 
 
 
@@ -113,7 +120,7 @@ p1 <- ggplot() +
                     xmin = plot_box$xmin ,
                     xmax = plot_box$xmin + .18) +
   annotate(geom="text",x= -99,y=29.28,label="September 2015 Precipitation",size=3,hjust=0)+
-  annotate(geom="text",x= -99,y=29.2,label= paste0("Basin average of ", sprintf("%0.2f", bap)),size=3,hjust=0)+
+  annotate(geom="text",x= -99,y=29.2,label= paste0("Basin average of ", sprintf("%0.2f", bap), " mm"),size=3,hjust=0)+
   
   theme(legend.key.height = unit(1.0, "cm"),
         legend.margin = margin(0,0,0,0),

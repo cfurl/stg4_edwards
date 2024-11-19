@@ -22,7 +22,9 @@ aoi <- list.files ("C:\\texas_mpe\\arrow\\gis\\eaa_recharge_basins\\clipped_hrap
 
 #outer loop
 for (a in aoi) {
-  
+
+#a<-"Bexar.shp"  
+    
   # set your shapefile of interest and solve for basin area
   map <- read_sf(paste0("C:\\texas_mpe\\arrow\\gis\\eaa_recharge_basins\\clipped_hrap\\",a)) |>
     st_drop_geometry()
@@ -33,7 +35,9 @@ for (a in aoi) {
   
   # inner loop
   for (y in 2002:2023) {
-    
+
+#y<-2008
+            
     eaa_query <- eaa_rain %>%
       filter(year == y) %>%
       group_by(grib_id,month, day, year) %>%

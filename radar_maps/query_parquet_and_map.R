@@ -120,7 +120,7 @@ p1 <- ggplot() +
                     xmin = plot_box$xmin ,
                     xmax = plot_box$xmin + .18) +
   annotate(geom="text",x= -99,y=29.28,label="September 2015 Precipitation",size=3,hjust=0)+
-  annotate(geom="text",x= -99,y=29.2,label= paste0("Basin average of ", sprintf("%0.2f", bap), " mm"),size=3,hjust=0)+
+  annotate(geom="text",x= -99,y=29.2,label= paste0("Basin average of ", sprintf("%0.2f", bap), " in"),size=3,hjust=0)+
   
   theme(legend.key.height = unit(1.0, "cm"),
         legend.margin = margin(0,0,0,0),

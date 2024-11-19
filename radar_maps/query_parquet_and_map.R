@@ -70,13 +70,13 @@ linear_radar_scale_two_break <- function (min, max, bin_number_minus_2, first_br
   colours <- as_tibble(c(NA,"#0826A2","#22FE05","#2CAC1B","#248418", "#F6FB07", "#FFE890", "#FFC348","#E01E17", "#A92B26","#8C302C","#CC17DA", "#AE6DB3","#8798C6" )) |>
     slice(1:(bin_number_minus_2+2))
   
-  breaks <- as_tibble(seq(min,max,max/bin_number)) |>
+  breaks <- as_tibble(seq(min,max,max/bin_number_minus_2)) |>
     slice(2:n()) |>
     slice(1:(n()-1))|>
     add_row(value = second_break, .before = 1)|>
     add_row(value = first_break, .before = 1)
   
-  breaks_w_lims <- as_tibble(seq(min,max,max/bin_number))  |>
+  breaks_w_lims <- as_tibble(seq(min,max,max/bin_number_minus_2))  |>
     add_row(value = second_break, .before = 2)|>
     add_row(value = first_break, .before = 2)  
   
@@ -124,7 +124,8 @@ p1 <- ggplot() +
   
   theme(legend.key.height = unit(1.0, "cm"),
         legend.margin = margin(0,0,0,0),
-        legend.box.margin=margin(-10,2,-10,-10),
+        legend.position = "left",
+        legend.box.margin=margin(0,2,0,5),
         plot.margin=unit(c(0,0,0,0), 'cm'),
         axis.title = element_blank(),
         axis.text.y = element_blank(),

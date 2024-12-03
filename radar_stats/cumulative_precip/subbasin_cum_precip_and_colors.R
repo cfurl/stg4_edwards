@@ -97,3 +97,10 @@ for (b in basin_avg_precip) {
   
 }
 
+map <- read_sf(".\\gis\\boundaries_features\\usgs_basins.shp") |>
+  clean_names() |>
+  set_names(c("basin","geometry"))|>
+  left_join(final, by="basin" )|>
+  relocate(geometry, .after = last_col())
+
+

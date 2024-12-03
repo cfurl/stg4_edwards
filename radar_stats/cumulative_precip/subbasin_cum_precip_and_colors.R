@@ -5,6 +5,7 @@
 # Pretending like all of my automation in "/radar_stats/cumulative_precip/' is figured out and I'm creating this figure on 12/31/2023.
 
 library(tidyverse)
+library(sf)
 
 #each of the csv's listed here contain:
   # timestamp
@@ -97,10 +98,18 @@ for (b in basin_avg_precip) {
   
 }
 
-map <- read_sf(".\\gis\\boundaries_features\\usgs_basins.shp") |>
-  clean_names() |>
+sub_map <- read_sf(".\\gis\\boundaries_features\\usgs_basins.shp") |>
+  st_cast( "MULTIPOLYGON")|>
   set_names(c("basin","geometry"))|>
   left_join(final, by="basin" )|>
   relocate(geometry, .after = last_col())
+
+cols <- c("below 10%" = "#A92B26", "above 10% below 25%" = "#FFC348", "above 25% below 40%" = "#F6FB07", "below median above 40%" = "#22FE05","above median below 60%" = "#22FE05","above 60% below 75%" = "#2CAC1B", "above 75% below 90%" = "#248418", "above 90%" = "#0826A2")
+
+s1 <- ggplot() +
+  
+  #geom_sf(data = sub_map, aes(color = "black"),  linewidth = .05)
+  geom_sf(data = sub_map, aes(fill= card_cat), color = "black",linewidth = .05, show.legend=TRUE)+ 
+  scale_color_manual(values = cols, drop = FALSE)
 
 

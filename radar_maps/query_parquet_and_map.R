@@ -104,7 +104,7 @@ p1 <- ggmap(ear) +
   
   geom_sf(data = streams, fill=NA, color="blue", linewidth = .1,   inherit.aes = FALSE) +
   geom_sf(data = lakes,  fill = "blue", linewidth = .1,   inherit.aes = FALSE) +
-  geom_sf(data = aaa, fill=NA, color="black", linewidth = .1,   inherit.aes = FALSE) +
+  geom_sf(data = ws_outline, fill=NA, color="black", linewidth = .1,   inherit.aes = FALSE) +
   
   annotation_raster(logo, # native logo is 796 (wide) x 1168 (tall)
                     # Position adjustments here using plot_box$max/min/range

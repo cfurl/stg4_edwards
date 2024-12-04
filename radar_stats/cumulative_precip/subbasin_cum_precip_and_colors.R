@@ -6,6 +6,7 @@
 
 library(tidyverse)
 library(sf)
+library("ggmap")
 
 #each of the csv's listed here contain:
   # timestamp
@@ -104,16 +105,28 @@ sub_map <- read_sf(".\\gis\\boundaries_features\\usgs_basins.shp") |>
   left_join(final, by="basin" )|>
   relocate(geometry, .after = last_col())
 
+
+### this is all junk below.  
+# punch list:
+# 1. ggmap () and geom_sf not showing up together.  Looks like they are on diff coord sys maybe?
+# 2. legend not showing values that are not used in plot
 cols <- c("below 10%" = "#A92B26", "above 10% below 25%" = "#FFC348", "above 25% below 40%" = "#F6FB07", "below median above 40%" = "#22FE05","above median below 60%" = "#22FE05","above 60% below 75%" = "#2CAC1B", "above 75% below 90%" = "#248418", "above 90%" = "#0826A2")
 
 values = c("red", "blue", "green", "purple", "pink", "yellow", "orange", "blue"),
 labels = c("below 10%", "above 10% below 25%", "above 25% below 40%", "below median above 40%","above median below 60%", "above 60% below 75%", "above 75% below 90%", "above 90%")
 
+# grab your tiles from Stadia.  Your API key is hard written in your .Renviron.
+ear <- get_stadiamap(bbox = c(left = -100.85, bottom = 29.0, 
+                              right = -97.75, top = 30.4), 
+                     zoom = 9,
+                     maptype = "alidade_smooth_dark",
+                     crop = TRUE)
 
-s1 <- ggplot() +
+s1 <- ggmap(ear) +
+#ggplot()+
   
   #geom_sf(data = sub_map, aes(color = "black"),  linewidth = .05)
-  geom_sf(data = sub_map, aes(fill= card_cat), color = "black",linewidth = .05, show.legend=TRUE)+ 
+  geom_sf(data = sub_map, aes(fill= card_cat), color = "black",linewidth = .05,alpha = 0.5, show.legend=TRUE,   inherit.aes = FALSE)+ 
   scale_fill_manual(values = c("red", "blue", "green", "purple", "pink", "yellow", "orange", "blue"),
                     labels = c("below 10%", "above 10% below 25%", "above 25% below 40%", "below median above 40%","above median below 60%", "above 60% below 75%", "above 75% below 90%", "above 90%")
                     , drop = FALSE)

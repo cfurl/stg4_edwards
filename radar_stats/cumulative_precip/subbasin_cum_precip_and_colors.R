@@ -132,4 +132,4 @@ s1 <- ggmap(ear) +
   scale_color_discrete(cols,drop = FALSE)
 
 
-ggsave(filename = "sub_basin.png", device = "png", path = ".\\plots", plot = s1, width = 6.5, height = 4.5, units = "in")
+#ggsave(filename = "sub_basin.png", device = "png", path = ".\\plots", plot = s1, width = 6.5, height = 4.5, units = "in")

@@ -99,14 +99,14 @@ for (b in basin_avg_precip) {
   
 }
 
+
+# map indiviudal sub basins, joint with the basin
 sub_map <- read_sf(".\\gis\\boundaries_features\\usgs_basins.shp") |>
   st_cast( "MULTIPOLYGON")|>
   st_transform(4326) |> # had to make a transformation here; had difficulty with getting ggmap and sf object cooperating
   set_names(c("basin","geometry"))|>
   left_join(final, by="basin" )|>
   relocate(geometry, .after = last_col())
-
-
 
 # grab your tiles from Stadia.  Your API key is hard written in your .Renviron.
 ear <- get_stadiamap(bbox = c(left = -100.85, bottom = 29.0, 
@@ -115,18 +115,21 @@ ear <- get_stadiamap(bbox = c(left = -100.85, bottom = 29.0,
                      maptype = "alidade_smooth_dark",
                      crop = TRUE)
 
-
-
-# punch list:
-
-# 4. legend not showing values that are not used in plot
-
 # set categories and colors
 cols <- c("below 10%" = "#A92B26", "above 10% below 25%" = "#FFC348", "above 25% below 40%" = "#F6FB07", "below median above 40%" = "#22FE05","above median below 60%" = "#22FE05","above 60% below 75%" = "#2CAC1B", "above 75% below 90%" = "#248418", "above 90%" = "#0826A2")
 
 s1 <- ggmap(ear) +
-
+#ggplot()+
   geom_sf(data = sub_map, aes(fill= card_cat), color = "black",linewidth = .05,alpha = 0.5, show.legend=TRUE,   inherit.aes = FALSE)+ 
+  annotate(geom="text",x= -100.75,y=30.28,label="Edwards Aquifer Recharge Sub-basins",size=4,hjust=0, color = "#F1F4FC")+
+  annotate(geom="text",x= -100.4,y=30,label="1",size=3,hjust=1, color = "#F1F4FC")+
+  annotate(geom="text",x= -99.78,y=29.92,label="2",size=3,hjust=1, color = "#F1F4FC")+
+  annotate(geom="text",x= -99.55,y=29.8,label="3",size=3,hjust=1, color = "#F1F4FC")+
+  annotate(geom="text",x= -99.38,y=29.68,label="4",size=3,hjust=1, color = "#F1F4FC")+
+  annotate(geom="text",x= -99.45,y=29.85,label="5",size=3,hjust=1, color = "#F1F4FC")+
+  annotate(geom="text",x= -98.77,y=29.65,label="6",size=3,hjust=1, color = "#F1F4FC")+
+  annotate(geom="text",x= -98.75,y=29.79,label="7",size=3,hjust=1, color = "#F1F4FC")+
   scale_color_discrete(cols,drop = FALSE)
 
 
+ggsave(filename = "sub_basin.png", device = "png", path = ".\\plots", plot = s1, width = 6.5, height = 4.5, units = "in")

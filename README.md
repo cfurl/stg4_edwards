@@ -18,7 +18,9 @@ Lastly, the outputs folder contains all final plots (pngs) as well as the final 
 
 `plot_ribbon_facet` (see [`function_ribbon.R`](./R/function_ribbon.R)): similar to `plot_ribbon`, generates a facetted ggplot graph (hyetograph). All parameters are the same as `plot_ribbon`, the only difference is the `select_basin` parameter is replaced with `basins`, and accepts a list of values e.g. `basins = c('Bexar', 'Blanco', 'Medinas')`.
 
-`plot_bin_map` (see `function_bin_map.R`): plots EAA Recharge Zone with 4km bins showing rainfall in mm. function requires data inputs, i.e. for param `map_rain` as well as shape files (`map_lakes`, `map_streams`). The `map_rain` data set must include sum_rain as a variable. Users can change the base layer map using `map_type` (e.g. cartolight, cartodark) and the bin color palette using a colorbrewer default (e.g. YlGnBu). There are additional styling parameters to change colors of fonts (e.g. `pal_title`), outlines, and water, as well as font family.
+`plot_bin_map` (see [`function_bin_map.R`](./R/function_bin_map.R)): plots EAA Recharge Zone with 4km bins showing rainfall in mm. function requires data inputs, i.e. for param `map_rain` as well as shape files (`map_lakes`, `map_streams`). The `map_rain` data set must include sum_rain as a variable. Users can change the base layer map using `map_type` (e.g. cartolight, cartodark) and the bin color palette using a colorbrewer default (e.g. YlGnBu). There are additional styling parameters to change colors of fonts (e.g. `pal_title`), outlines, and water, as well as font family.
+
+`plot_subbasin_map` (see [`function_subbasin_map.R`](./R/function_subbasin_bin_map.R)): plots subbasin map along with percentile bin buckets for average rainfall. Accepts arguments to change aesthetics, e.g. `pal_title`, `title_size`, `map_type` - as well as requirements for data, `data_rain` requires precipitation data for a desired date, and `map_subbasin` requires the appropriate shapefile.
 
 ## Plot Outputs
 
@@ -29,6 +31,14 @@ Example of an output using `plot_bin_map` using dark mode styling.
 Example of an output using `plot_bin_map` using light mode styling.
 
 ![](outputs/bin_map_light.png)
+
+Example of an output using `plot_subbasin_map` using dark mode styling.
+
+![](outputs/subbasin_map_dark.png)
+
+Example of an output using `plot_subbasin_map` using light mode styling.
+
+![](outputs/subbasin_map_light.png)
 
 Example of an output using `plot_ribbon`.
 

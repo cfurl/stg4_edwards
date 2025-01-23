@@ -6,6 +6,7 @@ library(patchwork)
 source("./R/function_ribbon.R")
 source("./R/branded_style.R")
 source("./R/function_bin_map.R")
+source("./R/function_subbasin_map.R")
 
 #useful for text renderin if font is not available locally
 sysfonts::font_add_google("Open Sans", family = "Open Sans")
@@ -119,6 +120,8 @@ precip_combo<-(guide_area() +
 
 #ggsave("./outputs/ribbon_combo.png",precip_combo,  bg="white", width = 9, height = 6, units="in", dpi=300)
 
+###PLOT - Bin Maps####
+
 #dark mode
 bin_map_dark<-plot_bin_map(title = 'Edwards Aquifer Recharge Zone',
                    subtitle= "September 2015 Precipitation. STG4 QPE BIN 4km.",
@@ -137,7 +140,7 @@ bin_map_dark<-plot_bin_map(title = 'Edwards Aquifer Recharge Zone',
 
 bin_map_dark
 
-ggsave("./outputs/bin_map_dark.png",bin_map_dark, width = 12, height = 9, units="in", dpi=300)
+#ggsave("./outputs/bin_map_dark.png",bin_map_dark, width = 12, height = 9, units="in", dpi=300)
 
 
 #light mode
@@ -160,6 +163,46 @@ bin_map_light<-plot_bin_map(subtitle= "September 2015 Precipitation. STG4 QPE BI
  
  bin_map_light
  
- ggsave("./outputs/bin_map_light.png",bin_map_light, width = 12, height = 9, units="in", dpi=300)
+ #ggsave("./outputs/bin_map_light.png",bin_map_light, width = 12, height = 9, units="in", dpi=300)
 
+ 
+ ###PLOT - Subbasin Maps####
+ 
+ date_end <- as.Date("2023-12-31")
+ subbasin_rain <- read.csv("data/processed/cumulative_subbasin.csv")|>filter(date == date_end)
+ subbasin_shape<-read_sf("./data/gis/boundaries_features/usgs_basins.shp")
 
+ subbasin_map_light<-plot_subbasin_map(
+   data_rain = subbasin_rain,
+   map_subbasin = subbasin_shape,
+   font = "Open Sans",
+   map_type = "cartolight",
+   title = "EAA Sub-basin Precipitation",
+   subtitle = "This is an example output of the sub-basin map",
+   legend_title = "Percentile Category",
+   title_size = 16, 
+   subtitle_size = 12, 
+   pal_legend = RColorBrewer::brewer.pal(6, "YlOrRd")
+ )
+ 
+ #ggsave("./outputs/subbasin_map_light.png", subbasin_map_light, width = 7, height = 5, units="in", dpi=300)
+ 
+ 
+ subbasin_map_dark<-plot_subbasin_map(
+   data_rain = basin_avg_precip,
+   map_subbasin = subbasin_shape,
+   font = "Open Sans",
+   map_type = "cartodark",
+   title = "EAA Sub-basin Precipitation",
+   subtitle = "This is an example output of the sub-basin map",
+   legend_title = "Percentile Category",
+   title_size = 16, 
+   subtitle_size = 12, 
+   pal_title = "white",
+   pal_subtitle = "white",
+   pal_legend_text = "white",
+   pal_legend = RColorBrewer::brewer.pal(6, "YlGnBu")
+ )
+ 
+ #ggsave("./outputs/subbasin_map_dark.png", subbasin_map_dark, width = 7, height = 5, units="in", dpi=300)
+ 
